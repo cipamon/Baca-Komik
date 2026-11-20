@@ -1,0 +1,15 @@
+[
+  {
+    "id": "member_demo_1",
+    "username": "pembaca",
+    "fullName": "Anggota Baca Komik",
+    "passwordHash": "ecaf2e2d331e83a59269b952bc06121b:fe028e5d945fa8b4db47cbef5c7604b042f281fc49c4c3b8d2da9d0efe5797dda439ecb75591a0f29619bb01c9dcd81552b6a181badb8ea2c98ddb50a40f9492",
+    "active": true,
+    "favorites": [
+      "bk_001",
+      "bk_002"
+    ],
+    "createdAt": "2026-11-20T07:24:09.648Z",
+    "updatedAt": "2026-11-20T07:24:09.648Z"
+  }
+]

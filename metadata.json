@@ -1,0 +1,8 @@
+{
+  "name": "Baca Komik",
+  "description": "Perpustakaan digital modern untuk membaca, mengelola, dan mengunduh koleksi komik dan e-book PDF secara cepat dan nyaman.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "entities": {
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Administrator akun Google yang terverifikasi untuk mengelola perpustakaan Baca Komik.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": { "type": "string", "enum": ["super_admin", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "displayName", "role", "createdAt"]
+    },
+    "Book": {
+      "title": "Book",
+      "description": "Entri komik atau buku digital PDF dalam katalog perpustakaan.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "code": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "author": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "category": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "year": { "type": "integer" },
+        "isbn": { "type": "string", "maxLength": 40 },
+        "publisher": { "type": "string", "maxLength": 120 },
+        "language": { "type": "string", "maxLength": 40 },
+        "pages": { "type": "integer" },
+        "description": { "type": "string", "maxLength": 4000 },
+        "pdfUrl": { "type": "string", "minLength": 1, "maxLength": 1500 },
+        "coverUrl": { "type": "string", "maxLength": 1500 },
+        "status": { "type": "string", "enum": ["published", "hidden"] },
+        "recommended": { "type": "boolean" },
+        "readCount": { "type": "integer" },
+        "downloadCount": { "type": "integer" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "code",
+        "title",
+        "author",
+        "category",
+        "year",
+        "pdfUrl",
+        "status",
+        "recommended",
+        "readCount",
+        "downloadCount",
+        "createdBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Kategori atau genre komik dan buku digital.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[a-z0-9_\\-]+$" },
+        "description": { "type": "string", "maxLength": 400 },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "slug", "createdBy", "createdAt", "updatedAt"]
+    },
+    "Member": {
+      "title": "Member",
+      "description": "Akun anggota perpustakaan yang dikelola oleh administrator.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "username": { "type": "string", "minLength": 3, "maxLength": 50, "pattern": "^[a-zA-Z0-9_.\\-]+$" },
+        "fullName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "active": { "type": "boolean" },
+        "createdBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "username", "fullName", "active", "createdBy", "createdAt", "updatedAt"]
+    },
+    "LibrarySettings": {
+      "title": "LibrarySettings",
+      "description": "Konfigurasi umum perpustakaan Baca Komik.",
+      "type": "object",
+      "properties": {
+        "libraryName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "tagline": { "type": "string", "maxLength": 240 },
+        "itemsPerPage": { "type": "integer" },
+        "allowGuestDownload": { "type": "boolean" },
+        "updatedBy": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["libraryName", "tagline", "itemsPerPage", "allowGuestDownload", "updatedBy", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Daftar administrator terverifikasi."
+    },
+    "/books/{bookId}": {
+      "schema": { "$ref": "#/entities/Book" },
+      "description": "Koleksi katalog buku dan komik digital."
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Daftar kategori katalog."
+    },
+    "/members/{memberId}": {
+      "schema": { "$ref": "#/entities/Member" },
+      "description": "Data anggota perpustakaan yang hanya dapat diakses oleh Admin."
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/LibrarySettings" },
+      "description": "Pengaturan global perpustakaan."
+    }
+  }
+}

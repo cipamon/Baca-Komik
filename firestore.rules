@@ -1,0 +1,224 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 1: Default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Pillar 3: Reusable global primitives
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isPrimaryAdmin() {
+      return isVerified() && request.auth.token.email == 'faniku2021@gmail.com';
+    }
+
+    function isAdmin() {
+      return isVerified() && (
+        isPrimaryAdmin() ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Validation Blueprints (Pillar 2)
+    function isValidAdminUser(data, adminId) {
+      return data.keys().hasAll(['uid', 'email', 'displayName', 'role', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'displayName', 'role', 'createdAt']) &&
+        data.uid is string && data.uid == adminId && isValidId(data.uid) &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 200 &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 120 &&
+        data.role in ['super_admin', 'admin'] &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidBook(data, bookId) {
+      return data.keys().hasAll([
+          'id', 'code', 'title', 'author', 'category', 'year',
+          'pdfUrl', 'status', 'recommended', 'readCount', 'downloadCount',
+          'createdBy', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'code', 'title', 'author', 'category', 'year',
+          'isbn', 'publisher', 'language', 'pages', 'description',
+          'pdfUrl', 'coverUrl', 'status', 'recommended', 'readCount',
+          'downloadCount', 'createdBy', 'createdAt', 'updatedAt'
+        ]) &&
+        data.id is string && data.id == bookId && isValidId(data.id) &&
+        data.code is string && data.code.size() >= 1 && data.code.size() <= 40 &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 240 &&
+        data.author is string && data.author.size() >= 1 && data.author.size() <= 160 &&
+        data.category is string && data.category.size() >= 1 && data.category.size() <= 80 &&
+        data.year is int && data.year >= 1900 && data.year <= 2100 &&
+        (!('isbn' in data) || (data.isbn is string && data.isbn.size() <= 40)) &&
+        (!('publisher' in data) || (data.publisher is string && data.publisher.size() <= 120)) &&
+        (!('language' in data) || (data.language is string && data.language.size() <= 40)) &&
+        (!('pages' in data) || (data.pages is int && data.pages >= 0 && data.pages <= 10000)) &&
+        (!('description' in data) || (data.description is string && data.description.size() <= 4000)) &&
+        data.pdfUrl is string && data.pdfUrl.size() >= 1 && data.pdfUrl.size() <= 1500 &&
+        (!('coverUrl' in data) || (data.coverUrl is string && data.coverUrl.size() <= 1500)) &&
+        data.status in ['published', 'hidden'] &&
+        data.recommended is bool &&
+        data.readCount is int && data.readCount >= 0 &&
+        data.downloadCount is int && data.downloadCount >= 0 &&
+        data.createdBy is string && isValidId(data.createdBy) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidCategory(data, categoryId) {
+      return data.keys().hasAll(['id', 'name', 'slug', 'createdBy', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'name', 'slug', 'description', 'createdBy', 'createdAt', 'updatedAt']) &&
+        data.id is string && data.id == categoryId && isValidId(data.id) &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 80 &&
+        data.slug is string && data.slug.size() >= 1 && data.slug.size() <= 80 && data.slug.matches('^[a-z0-9_\\-]+$') &&
+        (!('description' in data) || (data.description is string && data.description.size() <= 400)) &&
+        data.createdBy is string && isValidId(data.createdBy) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidMember(data, memberId) {
+      return data.keys().hasAll(['id', 'username', 'fullName', 'active', 'createdBy', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'username', 'fullName', 'active', 'createdBy', 'createdAt', 'updatedAt']) &&
+        data.id is string && data.id == memberId && isValidId(data.id) &&
+        data.username is string && data.username.size() >= 3 && data.username.size() <= 50 && data.username.matches('^[a-zA-Z0-9_.\\-]+$') &&
+        data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 120 &&
+        data.active is bool &&
+        data.createdBy is string && isValidId(data.createdBy) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidSettings(data) {
+      return data.keys().hasAll(['libraryName', 'tagline', 'itemsPerPage', 'allowGuestDownload', 'updatedBy', 'updatedAt']) &&
+        data.keys().hasOnly(['libraryName', 'tagline', 'itemsPerPage', 'allowGuestDownload', 'updatedBy', 'updatedAt']) &&
+        data.libraryName is string && data.libraryName.size() >= 1 && data.libraryName.size() <= 100 &&
+        data.tagline is string && data.tagline.size() <= 240 &&
+        data.itemsPerPage is int && data.itemsPerPage >= 6 && data.itemsPerPage <= 60 &&
+        data.allowGuestDownload is bool &&
+        data.updatedBy is string && isValidId(data.updatedBy) &&
+        data.updatedAt is timestamp;
+    }
+
+    // Health check document for testConnection()
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // Admins collection
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && isVerified() && (request.auth.uid == adminId || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isValidId(adminId) &&
+        isVerified() &&
+        isValidAdminUser(incoming(), adminId) &&
+        incoming().createdAt == request.time &&
+        (
+          (isPrimaryAdmin() && request.auth.uid == adminId && incoming().email == 'faniku2021@gmail.com') ||
+          isAdmin()
+        );
+      allow update: if isValidId(adminId) &&
+        isAdmin() &&
+        isValidAdminUser(incoming(), adminId) &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().uid == existing().uid;
+      allow delete: if isValidId(adminId) && isAdmin() && request.auth.uid != adminId;
+    }
+
+    // Books catalog collection
+    match /books/{bookId} {
+      allow get: if isValidId(bookId) && (existing().status == 'published' || isAdmin());
+      allow list: if resource.data.status == 'published' || isAdmin();
+      allow create: if isValidId(bookId) &&
+        isAdmin() &&
+        isValidBook(incoming(), bookId) &&
+        incoming().createdBy == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(bookId) &&
+        isAdmin() &&
+        isValidBook(incoming(), bookId) &&
+        incoming().id == existing().id &&
+        incoming().createdBy == existing().createdBy &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(bookId) && isAdmin();
+    }
+
+    // Categories collection (public catalog taxonomy, no PII)
+    match /categories/{categoryId} {
+      allow get: if isValidId(categoryId);
+      allow list: if true;
+      allow create: if isValidId(categoryId) &&
+        isAdmin() &&
+        isValidCategory(incoming(), categoryId) &&
+        incoming().createdBy == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(categoryId) &&
+        isAdmin() &&
+        isValidCategory(incoming(), categoryId) &&
+        incoming().id == existing().id &&
+        incoming().createdBy == existing().createdBy &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(categoryId) && isAdmin();
+    }
+
+    // Members directory (Admin-only PII protection)
+    match /members/{memberId} {
+      allow get: if isValidId(memberId) && isAdmin();
+      allow list: if isAdmin();
+      allow create: if isValidId(memberId) &&
+        isAdmin() &&
+        isValidMember(incoming(), memberId) &&
+        incoming().createdBy == request.auth.uid &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(memberId) &&
+        isAdmin() &&
+        isValidMember(incoming(), memberId) &&
+        incoming().id == existing().id &&
+        incoming().createdBy == existing().createdBy &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(memberId) && isAdmin();
+    }
+
+    // Library settings (public catalog configuration, no PII)
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId);
+      allow list: if true;
+      allow create: if isValidId(settingId) &&
+        isAdmin() &&
+        isValidSettings(incoming()) &&
+        incoming().updatedBy == request.auth.uid &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(settingId) &&
+        isAdmin() &&
+        isValidSettings(incoming()) &&
+        incoming().updatedBy == request.auth.uid &&
+        incoming().updatedAt == request.time;
+      allow delete: if isValidId(settingId) && isAdmin();
+    }
+  }
+}
