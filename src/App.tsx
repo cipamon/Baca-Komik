@@ -1,11 +1,10 @@
 import { onAuthStateChanged } from 'firebase/auth';
+import { motion } from 'motion/react';
 import {
   ArrowRight,
-  BookOpen,
   ChevronLeft,
   ChevronRight,
   FolderOpen,
-  Heart,
   Search,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -293,7 +292,7 @@ function BacaKomikApp() {
   const canDownload = settings.allowGuestDownload || Boolean(memberUser) || Boolean(adminUser);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-slate-900">
+    <div className="min-h-screen flex flex-col pixar-canvas text-[#0F2342]">
       <HeaderNav
         libraryName={settings.libraryName}
         activeTab={activeTab}
@@ -325,12 +324,12 @@ function BacaKomikApp() {
       ) : (
         /* PUBLIC DIGITAL LIBRARY CATALOG */
         <main className="flex-1 pb-20 md:pb-12">
-          {/* BERANDA HERO */}
+          {/* BERANDA HERO — 3D Pixar Cinema Studio Showcase */}
           {activeTab === 'home' && (
-            <section className="bg-slate-50/80 border-b border-slate-200/80">
+            <section className="pixar-hero-backdrop border-b border-slate-200/70">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                 <div className="lg:col-span-7 flex flex-col justify-center">
-                  <p className="text-xs font-medium text-[#0284C7] tracking-wide mb-2">
+                  <p className="text-xs font-semibold text-[#0284C7] tracking-wide mb-2">
                     Perpustakaan Digital Modern
                   </p>
                   <h1 className="font-serif text-3xl sm:text-5xl font-semibold text-[#0F2342] leading-[1.12] text-balance">
@@ -340,61 +339,68 @@ function BacaKomikApp() {
                     {settings.tagline} Baca langsung dari peramban dengan mode ringan, pratinjau cepat, serta dukungan mode malam yang nyaman.
                   </p>
 
-                  {/* Live Catalog Search */}
-                  <div className="mt-6 flex flex-col sm:flex-row gap-2.5 max-w-xl">
+                  {/* Live Catalog Search (Recessed 3D Tray + Pushable CTA) */}
+                  <div className="mt-6 flex flex-col sm:flex-row gap-3 max-w-xl">
                     <div className="relative flex-1">
-                      <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Cari judul komik, penulis, atau kode..."
-                        className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                        className="w-full pl-10 pr-4 py-2.5 text-sm pixar-surface-inset rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
                       />
                     </div>
                     <button
                       type="button"
                       onClick={() => setActiveTab('catalog')}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-[#0F2342] hover:bg-[#17325C] rounded-lg transition-colors whitespace-nowrap cursor-pointer"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl pixar-btn-navy whitespace-nowrap cursor-pointer"
                     >
                       <span>Semua Buku</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 text-amber-200" />
                     </button>
                   </div>
 
-                  {/* Clean Quantitative Strip */}
-                  <div className="mt-7 pt-6 border-t border-slate-200/80 grid grid-cols-3 gap-4 max-w-md">
-                    <div>
-                      <p className="font-mono text-xl sm:text-2xl font-semibold text-[#0F2342] tabular-nums">
+                  {/* Sculpted 3D Quantitative Strip */}
+                  <div className="mt-7 grid grid-cols-3 gap-3 max-w-md">
+                    <div className="pixar-card rounded-2xl px-3.5 py-3">
+                      <p className="font-mono text-xl sm:text-2xl font-bold text-[#0F2342] tabular-nums">
                         {publicBooks.length}
                       </p>
-                      <p className="text-xs text-slate-500">Koleksi Komik</p>
+                      <p className="text-[11px] font-medium text-slate-500 mt-0.5">Koleksi Komik</p>
                     </div>
-                    <div>
-                      <p className="font-mono text-xl sm:text-2xl font-semibold text-[#0F2342] tabular-nums">
+                    <div className="pixar-card rounded-2xl px-3.5 py-3">
+                      <p className="font-mono text-xl sm:text-2xl font-bold text-[#0F2342] tabular-nums">
                         {categories.length}
                       </p>
-                      <p className="text-xs text-slate-500">Kategori</p>
+                      <p className="text-[11px] font-medium text-slate-500 mt-0.5">Kategori</p>
                     </div>
-                    <div>
-                      <p className="font-mono text-xl sm:text-2xl font-semibold text-[#0284C7] tabular-nums">
+                    <div className="pixar-card rounded-2xl px-3.5 py-3">
+                      <p className="font-mono text-xl sm:text-2xl font-bold text-[#0284C7] tabular-nums">
                         PDF
                       </p>
-                      <p className="text-xs text-slate-500">Pembaca Ganda</p>
+                      <p className="text-[11px] font-medium text-slate-500 mt-0.5">Pembaca Ganda</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-5">
-                  <div className="h-full min-h-[220px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
-                    <img
-                      src="/src/assets/images/hero_library_editorial_1795158918999.jpg"
-                      alt="Ruang baca perpustakaan digital Baca Komik"
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover"
-                    />
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                  className="lg:col-span-5"
+                >
+                  <div className="h-full min-h-[240px] p-2.5 rounded-3xl bg-white/90 border border-white pixar-frame-3d overflow-hidden">
+                    <div className="w-full h-full rounded-2xl overflow-hidden bg-slate-100">
+                      <img
+                        src="/src/assets/images/pixar_hero_library_1795212786868.jpg"
+                        alt="Ilustrasi 3D studio perpustakaan Baca Komik"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </section>
           )}
@@ -402,14 +408,14 @@ function BacaKomikApp() {
           {/* Admin notice if catalog still using starter seed */}
           {adminUser && usingSeedFallback && (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-5">
-              <div className="bg-sky-50 border border-sky-200 rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-sky-900">
+              <div className="pixar-card rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-[#0F2342]">
                 <span>
-                  Saat ini katalog menampilkan data contoh bawaan. Simpan ke Firestore lewat Dashboard Admin agar dapat disunting permanen.
+                  Saat ini katalog menampilkan data koleksi bawaan. Simpan ke Firestore lewat Dashboard Admin agar dapat disunting permanen.
                 </span>
                 <button
                   type="button"
                   onClick={() => setInAdminView(true)}
-                  className="px-3 py-1.5 font-medium text-white bg-[#0F2342] rounded-lg cursor-pointer"
+                  className="px-3.5 py-1.5 font-semibold rounded-xl pixar-btn-navy cursor-pointer"
                 >
                   Buka Dashboard Admin
                 </button>
@@ -420,7 +426,7 @@ function BacaKomikApp() {
           {/* BERANDA: REKOMENDASI PILIHAN */}
           {activeTab === 'home' && recommendedBooks.length > 0 && !searchQuery && selectedCategory === 'ALL' && (
             <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10">
-              <div className="flex items-end justify-between gap-4 mb-4">
+              <div className="flex items-end justify-between gap-4 mb-5">
                 <div>
                   <h2 className="font-serif text-xl sm:text-2xl font-semibold text-[#0F2342]">
                     Pilihan Kurator
@@ -432,13 +438,13 @@ function BacaKomikApp() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('catalog')}
-                  className="text-xs font-medium text-[#0284C7] hover:underline whitespace-nowrap cursor-pointer"
+                  className="px-3.5 py-1.5 text-xs font-semibold rounded-xl pixar-btn-soft whitespace-nowrap cursor-pointer"
                 >
                   Lihat Semua
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4">
                 {recommendedBooks.map((book) => (
                   <BookCard
                     key={`rec-${book.id}`}
@@ -456,14 +462,30 @@ function BacaKomikApp() {
 
           {/* KATEGORI VIEW */}
           {activeTab === 'categories' ? (
-            <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-8">
-              <div className="mb-6">
-                <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-[#0F2342]">
-                  Kategori Koleksi
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  Pilih genre atau topik untuk menelusuri komik dan literatur terkait.
-                </p>
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
+              {/* 3D Diorama Spotlight Banner */}
+              <div className="pixar-card rounded-3xl p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <div className="lg:col-span-7 flex flex-col justify-center">
+                  <p className="text-xs font-semibold text-[#0284C7] mb-1.5">
+                    Eksplorasi Dunia Cerita
+                  </p>
+                  <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-[#0F2342] text-balance">
+                    Kategori Koleksi
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed max-w-xl">
+                    Pilih genre atau tema sejarah Nusantara untuk menelusuri komik dan literatur visual terkurasi dari koleksi digital perpustakaan.
+                  </p>
+                </div>
+                <div className="lg:col-span-5">
+                  <div className="h-44 sm:h-52 lg:h-full rounded-2xl overflow-hidden border border-white shadow-[0_12px_24px_-12px_rgba(15,35,66,0.28)]">
+                    <img
+                      src="/src/assets/images/pixar_diorama_nusantara_1795212787363.jpg"
+                      alt="Diorama 3D kisah Nusantara di atas buku komik"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -477,12 +499,14 @@ function BacaKomikApp() {
                         setSelectedCategory(cat.name);
                         setActiveTab('catalog');
                       }}
-                      className="text-left p-5 bg-white border border-slate-200 rounded-xl hover:border-[#0284C7] transition-colors flex flex-col justify-between cursor-pointer"
+                      className="text-left p-5 pixar-card pixar-card-interactive rounded-2xl flex flex-col justify-between cursor-pointer"
                     >
                       <div>
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <FolderOpen className="w-5 h-5 text-[#0284C7]" />
-                          <span className="font-mono text-xs tabular-nums text-slate-500">
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <span className="w-10 h-10 rounded-xl pixar-btn-sky flex items-center justify-center">
+                            <FolderOpen className="w-5 h-5 text-white" />
+                          </span>
+                          <span className="font-mono text-xs font-semibold tabular-nums text-slate-600">
                             {count} buku
                           </span>
                         </div>
@@ -493,7 +517,7 @@ function BacaKomikApp() {
                           {cat.description || `Koleksi komik dan bacaan kategori ${cat.name}.`}
                         </p>
                       </div>
-                      <span className="mt-4 text-xs font-medium text-[#0284C7] inline-flex items-center gap-1">
+                      <span className="mt-4 text-xs font-semibold text-[#0284C7] inline-flex items-center gap-1">
                         <span>Jelajahi</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </span>
@@ -524,13 +548,13 @@ function BacaKomikApp() {
                 <div className="flex flex-wrap items-center gap-2.5">
                   {activeTab !== 'home' && (
                     <div className="relative flex-1 sm:w-56">
-                      <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         type="search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Cari judul / penulis..."
-                        className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                        className="w-full pl-8 pr-3 py-1.5 text-xs pixar-surface-inset rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
                       />
                     </div>
                   )}
@@ -539,7 +563,7 @@ function BacaKomikApp() {
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     aria-label="Filter kategori"
-                    className="px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg"
+                    className="px-3 py-1.5 text-xs font-medium text-[#0F2342] pixar-surface-inset rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
                   >
                     <option value="ALL">Semua Kategori</option>
                     {categories.map((c) => (
@@ -555,7 +579,7 @@ function BacaKomikApp() {
                       setSortBy(e.target.value as 'popular' | 'newest' | 'title')
                     }
                     aria-label="Urutkan buku"
-                    className="px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg"
+                    className="px-3 py-1.5 text-xs font-medium text-[#0F2342] pixar-surface-inset rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
                   >
                     <option value="popular">Terpopuler</option>
                     <option value="newest">Terbaru</option>
@@ -565,14 +589,14 @@ function BacaKomikApp() {
               </div>
 
               {activeTab === 'favorites' && !memberUser && (
-                <div className="mt-4 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+                <div className="mt-4 px-4 py-3 pixar-card rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs text-slate-700">
                   <span>
                     Favorit tersimpan di peramban ini. Masuk sebagai Anggota untuk menyinkronkan favorit ke server lintas perangkat.
                   </span>
                   <button
                     type="button"
                     onClick={() => setAuthModalOpen(true)}
-                    className="px-3 py-1.5 font-medium text-white bg-[#0F2342] rounded-lg cursor-pointer"
+                    className="px-3.5 py-1.5 font-semibold rounded-xl pixar-btn-navy cursor-pointer"
                   >
                     Masuk Anggota
                   </button>
@@ -580,33 +604,36 @@ function BacaKomikApp() {
               )}
 
               {catalogLoading ? (
-                <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4">
                   {Array.from({ length: 12 }).map((_, i) => (
                     <div
                       key={i}
-                      className="border border-slate-200 rounded-xl overflow-hidden bg-white animate-pulse"
+                      className="pixar-card rounded-2xl p-2 overflow-hidden animate-pulse"
                     >
-                      <div className="aspect-[3/4] bg-slate-100" />
-                      <div className="p-3 space-y-2">
-                        <div className="h-3.5 bg-slate-100 rounded w-5/6" />
-                        <div className="h-3 bg-slate-100 rounded w-1/2" />
+                      <div className="aspect-[3/4] rounded-xl bg-slate-200/70" />
+                      <div className="p-2 space-y-2 mt-1">
+                        <div className="h-3.5 bg-slate-200/70 rounded w-5/6" />
+                        <div className="h-3 bg-slate-200/70 rounded w-1/2" />
                       </div>
                     </div>
                   ))}
                 </div>
               ) : pagedBooks.length === 0 ? (
-                <div className="my-12 py-12 px-6 text-center border border-slate-200 rounded-2xl bg-slate-50/50">
-                  {activeTab === 'favorites' ? (
-                    <Heart className="w-8 h-8 text-slate-300 mx-auto mb-3" />
-                  ) : (
-                    <BookOpen className="w-8 h-8 text-slate-300 mx-auto mb-3" />
-                  )}
-                  <h3 className="font-serif text-lg font-semibold text-[#0F2342]">
+                <div className="my-12 py-12 px-6 text-center pixar-card rounded-3xl max-w-xl mx-auto">
+                  <div className="w-28 h-28 mx-auto mb-4 rounded-3xl overflow-hidden border-2 border-white shadow-[0_12px_24px_-8px_rgba(15,35,66,0.25)]">
+                    <img
+                      src="/src/assets/images/pixar_owl_scholar_1795212787351.jpg"
+                      alt="Maskot pustakawan Baca Komik"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-serif text-xl font-semibold text-[#0F2342]">
                     {activeTab === 'favorites'
                       ? 'Belum Ada Buku Favorit'
                       : 'Tidak Ada Buku yang Cocok'}
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                  <p className="text-xs text-slate-600 mt-1.5 max-w-md mx-auto leading-relaxed">
                     {activeTab === 'favorites'
                       ? 'Klik ikon hati pada kartu komik untuk menyimpannya ke daftar favorit Anda.'
                       : 'Coba ubah kata kunci pencarian atau pilih kategori lain.'}
@@ -619,7 +646,7 @@ function BacaKomikApp() {
                         setSelectedCategory('ALL');
                         setActiveTab('catalog');
                       }}
-                      className="mt-4 px-4 py-2 text-xs font-medium text-white bg-[#0F2342] rounded-lg cursor-pointer"
+                      className="mt-5 px-5 py-2.5 text-xs font-semibold rounded-xl pixar-btn-navy cursor-pointer"
                     >
                       Tampilkan Semua Buku
                     </button>
@@ -627,7 +654,7 @@ function BacaKomikApp() {
                 </div>
               ) : (
                 <>
-                  <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
+                  <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4">
                     {pagedBooks.map((book, idx) => (
                       <BookCard
                         key={book.id}
@@ -643,7 +670,7 @@ function BacaKomikApp() {
 
                   {/* Pagination */}
                   {totalPages > 1 && (
-                    <div className="mt-8 flex items-center justify-center gap-2">
+                    <div className="mt-8 flex items-center justify-center gap-2.5">
                       <button
                         type="button"
                         disabled={safePage <= 1}
@@ -651,12 +678,12 @@ function BacaKomikApp() {
                           setCurrentPage((p) => Math.max(1, p - 1));
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
+                        className="inline-flex items-center gap-1 px-3.5 py-2 text-xs font-semibold rounded-xl pixar-btn-soft disabled:opacity-40 cursor-pointer"
                       >
                         <ChevronLeft className="w-4 h-4" />
                         <span>Sebelumnya</span>
                       </button>
-                      <span className="px-3 text-xs font-mono tabular-nums text-slate-600">
+                      <span className="px-3.5 py-1.5 text-xs font-mono font-semibold tabular-nums text-[#0F2342] pixar-surface-inset rounded-xl">
                         Halaman {safePage} dari {totalPages}
                       </span>
                       <button
@@ -666,7 +693,7 @@ function BacaKomikApp() {
                           setCurrentPage((p) => Math.min(totalPages, p + 1));
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-40 cursor-pointer"
+                        className="inline-flex items-center gap-1 px-3.5 py-2 text-xs font-semibold rounded-xl pixar-btn-soft disabled:opacity-40 cursor-pointer"
                       >
                         <span>Berikutnya</span>
                         <ChevronRight className="w-4 h-4" />
@@ -682,12 +709,12 @@ function BacaKomikApp() {
 
       {/* Quiet Editorial Footer */}
       {!inAdminView && (
-        <footer className="border-t border-slate-200 bg-slate-50/70 py-6 px-4 sm:px-6 mb-14 md:mb-0">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <footer className="border-t border-slate-200/80 bg-white/75 backdrop-blur-sm py-6 px-4 sm:px-6 mb-14 md:mb-0">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
             <p>
               © {new Date().getFullYear()} {settings.libraryName}. Perpustakaan Komik & Literatur Digital.
             </p>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-5 font-medium">
               <button
                 type="button"
                 onClick={() => setActiveTab('catalog')}

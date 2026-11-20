@@ -417,7 +417,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const currentTabLabel = sidebarItems.find((i) => i.id === activeTab)?.label || 'Dashboard';
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-slate-50 flex flex-col lg:flex-row">
+    <div className="min-h-[calc(100vh-4rem)] pixar-canvas flex flex-col lg:flex-row">
       {/* Mobile/Tablet Admin Top Bar with Hamburger Menu strictly on the LEFT */}
       <div className="lg:hidden sticky top-16 z-30 bg-white border-b border-slate-200 px-4 h-12 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -496,13 +496,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       )}
 
       {/* Desktop Left Sidebar */}
-      <aside className="hidden lg:flex w-64 shrink-0 bg-white border-r border-slate-200 flex-col">
-        <div className="p-4 border-b border-slate-100">
+      <aside className="hidden lg:flex w-64 shrink-0 bg-white/90 backdrop-blur-md border-r border-slate-200/80 shadow-[4px_0_24px_-16px_rgba(15,35,66,0.14)] flex-col">
+        <div className="p-4 border-b border-slate-200/70">
           <p className="text-xs font-semibold text-[#0F2342] truncate">{adminUser.displayName}</p>
           <p className="text-[11px] text-slate-500 truncate mt-0.5">{adminUser.email}</p>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1.5">
           {sidebarItems.map((item) => (
             <button
               key={item.id}
@@ -511,10 +511,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 setEditingBook(null);
                 setActiveTab(item.id);
               }}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === item.id
-                  ? 'bg-[#0F2342] text-white'
-                  : 'text-slate-700 hover:bg-slate-100'
+                  ? 'pixar-btn-navy text-white'
+                  : 'text-slate-700 hover:bg-slate-100/80'
               }`}
             >
               <span className="flex items-center gap-2.5">
@@ -567,10 +567,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="button"
                   onClick={handleSeedDemo}
                   disabled={seeding}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#0F2342] bg-white border border-slate-300 hover:bg-slate-50 rounded-lg cursor-pointer disabled:opacity-60"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl pixar-btn-soft cursor-pointer disabled:opacity-60"
                 >
                   <Database className="w-3.5 h-3.5 text-[#0284C7]" />
-                  <span>{seeding ? 'Mengisi...' : 'Isi Data Contoh (24 Komik)'}</span>
+                  <span>{seeding ? 'Menyimpan...' : 'Simpan 36 Koleksi ke Firestore'}</span>
                 </button>
                 <button
                   type="button"
@@ -578,58 +578,58 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     setEditingBook(null);
                     setActiveTab('add-book');
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-[#0F2342] hover:bg-[#17325C] rounded-lg cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl pixar-btn-navy cursor-pointer"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-3.5 h-3.5 text-amber-200" />
                   <span>Tambah Buku</span>
                 </button>
               </div>
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
+              <div className="pixar-card rounded-2xl p-4">
                 <p className="text-xs text-slate-500">Total Koleksi</p>
-                <p className="font-mono text-2xl font-semibold text-[#0F2342] tabular-nums mt-1">
+                <p className="font-mono text-2xl font-bold text-[#0F2342] tabular-nums mt-1">
                   {books.length}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1 tabular-nums">
                   {publishedBooks.length} terbit · {hiddenBooks.length} tersembunyi
                 </p>
               </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
+              <div className="pixar-card rounded-2xl p-4">
                 <p className="text-xs text-slate-500">Kategori</p>
-                <p className="font-mono text-2xl font-semibold text-[#0F2342] tabular-nums mt-1">
+                <p className="font-mono text-2xl font-bold text-[#0F2342] tabular-nums mt-1">
                   {categories.length}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1">Genre & topik aktif</p>
               </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
+              <div className="pixar-card rounded-2xl p-4">
                 <p className="text-xs text-slate-500">Anggota Aktif</p>
-                <p className="font-mono text-2xl font-semibold text-[#0F2342] tabular-nums mt-1">
+                <p className="font-mono text-2xl font-bold text-[#0F2342] tabular-nums mt-1">
                   {members.filter((m) => m.active).length}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1 tabular-nums">
                   Total {members.length} akun
                 </p>
               </div>
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
+              <div className="pixar-card rounded-2xl p-4">
                 <p className="text-xs text-slate-500">Total Pembaca</p>
-                <p className="font-mono text-2xl font-semibold text-[#0284C7] tabular-nums mt-1">
+                <p className="font-mono text-2xl font-bold text-[#0284C7] tabular-nums mt-1">
                   {totalReads}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1">Sesi baca tercatat</p>
               </div>
-              <div className="col-span-2 lg:col-span-1 bg-white border border-slate-200 rounded-xl p-4">
+              <div className="col-span-2 lg:col-span-1 pixar-card rounded-2xl p-4">
                 <p className="text-xs text-slate-500">Total Unduhan</p>
-                <p className="font-mono text-2xl font-semibold text-[#0F2342] tabular-nums mt-1">
+                <p className="font-mono text-2xl font-bold text-[#0F2342] tabular-nums mt-1">
                   {totalDownloads}
                 </p>
                 <p className="text-[11px] text-slate-500 mt-1">Unduhan PDF</p>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+            <div className="pixar-card rounded-2xl overflow-hidden">
+              <div className="px-5 py-3.5 border-b border-slate-200/70 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-[#0F2342]">Buku Terpopuler</h2>
                 <button
                   type="button"
